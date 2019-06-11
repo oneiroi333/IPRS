@@ -1,33 +1,26 @@
 from datetime import datetime
 from .CrawlerBase import CrawlerBase
 
-
 class CrawlerManager:
-    """
-    Manages the starting of multiple crawler
+    def __init__(self, verbose=False):
+        self.verbose = verbose
+        self._crawler = []
 
-    TODO start thread/process for every crawler?
-    """
-    def __init__(self):
-        self.registeredCrawler = []
-
-    def registerCrawler(self, crawler):
-        """
-        Register a crawler for execution
-        """
+    def register_crawler(self, crawler):
         if (not isinstance(crawler, CrawlerBase)):
-                raise TypeError('Invalid crawler: crawler must be of instance CrawlerBase')
-        self.registeredCrawler.append(crawler)
+                raise TypeError('Invalid crawler: crawler must inherit from abstract class CrawlerBase')
+        self._crawler.append(crawler)
 
     def start(self):
-        """
-        Start executing all registered crawler
-        """
         timefrmt = '%H:%M:%S' 
 
-        for crawler in self.registeredCrawler:
-            starttime = datetime.now().strftime(timefrmt)
-            print('[{}] Starting Crawler: {}'.format(starttime, crawler.name))
+        for crawler in self._crawler:
+            if self.verbose:
+                starttime = datetime.now().strftime(timefrmt)
+                print('[{}] Start crawling: {}'.format(starttime, crawler.url))
+
             crawler.start()
-            endtime = datetime.now().strftime(timefrmt)
-            print('[{}] Finished'.format(endtime))
+
+            if self.verbose:
+                endtime = datetime.now().strftime(timefrmt)
+                print('[{}] Finished crawling: {}'.format(starttime, crawler.url))
