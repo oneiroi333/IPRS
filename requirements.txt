@@ -1,3 +1,7 @@
+# Crawler
+requests-html
 beautifulsoup4
+
+# Whois
 dnspython
 ipwhois

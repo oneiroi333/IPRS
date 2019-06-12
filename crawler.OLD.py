@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 
+import sys
 import os
 import argparse
 
 def main():
+    # Parse arguments
     parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument('--add', help='Add crawler to the pool. Name must match the filename in src/crawler/XXX without fileextension')
@@ -15,7 +17,6 @@ def main():
     verbose = False
     if (args.verbose):
         verbose = True
-
     dir_path = os.path.dirname(os.path.realpath(__file__))
     active_crawler_path = dir_path + '/active_crawler'
     crawler_src_path = dir_path + '/src/crawler/'
@@ -23,7 +24,12 @@ def main():
     if (args.add):
         exists = os.path.isfile(os.path.join(crawler_src_path, args.add + '.py'))
         if exists:
-            os.symlink(os.path.join(crawler_src_path, args.add + '.py'), os.path.join(active_crawler_path, args.add))
+            try:
+                os.symlink(os.path.join(crawler_src_path, args.add + '.py'), os.path.join(active_crawler_path, args.add))
+            except error as e:
+                if verbose:
+                    print("Couldn't add crawler: '{}'".format(e))
+                sys.exit(1)
             if verbose:
                 print("Crawler added '{}'".format(args.add))
         else:
