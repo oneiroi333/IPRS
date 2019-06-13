@@ -1,10 +1,12 @@
 from datetime import datetime
 from .CrawlerBase import CrawlerBase
 
+
 class CrawlerManager:
+
     def __init__(self, verbose=False):
         self.verbose = verbose
-        self._crawler = []
+        self._crawler = {}
 
     def register_crawler(self, crawler):
         if (not isinstance(crawler, CrawlerBase)):

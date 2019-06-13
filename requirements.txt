@@ -1,6 +1,5 @@
 # Crawler
-requests-html
-beautifulsoup4
+selenium
 
 # Whois
 dnspython
