@@ -3,16 +3,18 @@ import requests
 from selenium import webdriver
 
 from .CrawlerBase import CrawlerBase
-from ..data_model.IP_Record import IP_Record
-from ..data_model.IP_List_Record import IP_List_Record
+from .CrawlerResult import CrawlerResult
+from ..DataModel import IP_List_Record, IP_Record
 
 
 class CrawlerThreatfeedsIo(CrawlerBase):
+
     '''
     Requires the binaries:
         chrome
         chromedriver
     '''
+
     def __init__(self):
         self.url = 'https://threatfeeds.io/'
         self._webdriver_conf = {
@@ -77,7 +79,7 @@ class CrawlerThreatfeedsIo(CrawlerBase):
             # TODO
             # Should only fetch the data if the list got modified
             # since the last fetch (date_last_fetch)
-            # we would need some way to get that information from mongodb here
+
             resp = requests.get(data_url)
             if resp.status_code != requests.codes.ok:
                 continue
@@ -95,13 +97,8 @@ class CrawlerThreatfeedsIo(CrawlerBase):
 
         driver.quit()
 
-    def get_results(self):
-        results = set(
-            self._ip_records, 
-            self._iplist_records,
-            self._ip_to_iplist_map
-        )
-        return results
+    def get_result(self):
+        return CrawlerResult(self._ip_records, self._iplist_records, self._ip_to_iplist_map)
 
     def _process_list(self, name, data):
         ip_addr_list = None
@@ -113,10 +110,12 @@ class CrawlerThreatfeedsIo(CrawlerBase):
         if ip_addr_list:
             for ip_addr in ip_addr_list:
                 ip_addr = ip_addr.strip()
-                ip_rec = IP_Record()
-                ip_rec.ip_address = ip_addr
-                self._ip_records.update({ip_addr: ip_rec})
-                # Map IP to IP_List
+
+                if not self._ip_records.get(ip_addr):
+                    ip_rec = IP_Record()
+                    ip_rec.ip_address = ip_addr
+                    self._ip_records.update({ip_addr: ip_rec})
+
                 lists = self._ip_to_iplist_map.get(ip_addr)
                 if lists:
                     lists.append(name)
