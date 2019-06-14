@@ -6,5 +6,5 @@ from src.data_composer import DataComposer
 composer = DataComposer(verbose=True)
 try:
     composer.start()
-except:
+except RuntimeError:
     sys.exit(1)
