@@ -55,17 +55,27 @@ class Whois():
 
                         contact = entity.get('contact') 
                         if contact:
-                            addresses = []
+                            addresses = None
                             address = contact.get('address')
                             if address:
+                                addresses = []
                                 for addr in address:
                                     if addr.get('value'):
                                         addresses.append(addr.get('value'))
+
+                            emails = None
+                            email = contact.get('email')
+                            if email:
+                                emails = []
+                                for em in email:
+                                    if em.get('value'):
+                                        emails.append(em.get('value'))
+
                             contact = {
                                 'name': contact.get('name'),
                                 'kind': contact.get('kind'),
                                 'address': addresses,
-                                'email': contact.get('email'),
+                                'email': emails,
                                 'phone': contact.get('phone'),
                             }
                         result['entities'].append({

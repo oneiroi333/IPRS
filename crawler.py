@@ -1,5 +1,6 @@
-import sys
+#!/usr/bin/env python3
 
+import sys
 from src.data_composer import DataComposer
 
 
