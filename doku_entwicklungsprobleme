@@ -1,3 +1,0 @@
-Crawler:
-- problem beim crawlen von threatfeeds.io, da die inhalte über javascript ins html eingefügt werden.
-  die normale "requests" methode funktioniert hier nicht, da javascript nicht ausgeführt wird und wir deshalb ein leeres html gerüst bekommen.
