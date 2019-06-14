@@ -22,7 +22,7 @@ class CrawlerThreatfeedsIo(CrawlerBase):
             'chromedriver_path': None
         }
         self._process_list_name = [ # Processing of these lists is implemented
-            #'Botvrij.eu - ips',
+            'Botvrij.eu - ips',
             'Zeus Bad IPs'
         ]
         self._ip_records = {} # { IP_Record.ip_address : IP_Record }
@@ -77,6 +77,7 @@ class CrawlerThreatfeedsIo(CrawlerBase):
 
             # TODO
             # Should only fetch the data if the list got modified since the last fetch (date_last_fetch)
+            # This data needs to be passed from the CrawlerManager and in return from the DataComposer
 
             resp = requests.get(data_url)
             if resp.status_code != requests.codes.ok:

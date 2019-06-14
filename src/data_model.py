@@ -26,7 +26,6 @@ class IP_Record:
             ip_address = None,
             ip_version = 4,
             date_created = datetime.now(),
-            date_first_seen = datetime.now(),
             date_last_seen = datetime.now(),
             tags = {
                 'proxy': False,
@@ -43,7 +42,6 @@ class IP_Record:
         self.ip_address = ip_address
         self.ip_version = ip_version
         self.date_created = date_created
-        self.date_first_seen = date_first_seen
         self.date_last_seen = date_last_seen
         self.tags = tags
         self.whois = whois
