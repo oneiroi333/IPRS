@@ -2,9 +2,9 @@ import re
 import requests
 from selenium import webdriver
 
-from .CrawlerBase import CrawlerBase
-from .CrawlerResult import CrawlerResult
-from ..DataModel import IP_List_Record, IP_Record
+from .crawler_base import CrawlerBase
+from .crawler_result import CrawlerResult
+from ..data_model import IP_List_Record, IP_Record
 
 
 class CrawlerThreatfeedsIo(CrawlerBase):
@@ -20,14 +20,14 @@ class CrawlerThreatfeedsIo(CrawlerBase):
         self._webdriver_conf = {
             'chrome_path': None,
             'chromedriver_path': None
-            }
+        }
+        self._process_list_name = [ # Processing of these lists is implemented
+            #'Botvrij.eu - ips',
+            'Zeus Bad IPs'
+        ]
         self._ip_records = {} # { IP_Record.ip_address : IP_Record }
         self._iplist_records = {} # { IP_List_Record.name : IP_List_Record }
         self._ip_to_iplist_map = {} # { ip_address: [name1, name2] }
-        self._process_list_name = [ # Only process these lists
-            'Botvrij.eu - ips',
-            'Zeus Bad IPs'
-            ]
 
     def start(self):
         chrome_options = webdriver.chrome.options.Options() 
@@ -36,9 +36,9 @@ class CrawlerThreatfeedsIo(CrawlerBase):
             chrome_options.binary_location = self._webdriver_conf['chrome_path']
         if self._webdriver_conf['chromedriver_path']:
             driver = webdriver.Chrome(
-                executable_path=self._webdriver_conf['chromedriver_path'],
-                chrome_options=chrome_options
-                )
+                executable_path = self._webdriver_conf['chromedriver_path'],
+                chrome_options = chrome_options
+            )
         else:
             driver = webdriver.Chrome(options=chrome_options)
         driver.get(self.url)
@@ -46,7 +46,7 @@ class CrawlerThreatfeedsIo(CrawlerBase):
         # Get the list metadata
         results = driver.find_element_by_id('results')
         items = results.find_elements_by_css_selector('div.item')
-        for idx, item in enumerate(items):
+        for item in items:
             # get rid of sponsored lists cause we cant access them for free(?)
             if 'sponsored' in item.get_attribute('class'):
                 continue
@@ -54,8 +54,7 @@ class CrawlerThreatfeedsIo(CrawlerBase):
             try:
                 name = item.find_element_by_css_selector('div.name').text
             except:
-                # The list name is the only information for us to know if we can process the list or not
-                # So unfortunately we have to skip it
+                # The list name is the only information we have to know if we can process the list or not
                 continue
             # Check if we implemented the processing of this list
             if name not in self._process_list_name:
@@ -66,7 +65,7 @@ class CrawlerThreatfeedsIo(CrawlerBase):
             except:
                 managed_by_name = None
             try:
-                managed_by_url = infoblock.find_element_by_css_selector('a.infoblock').get_attribute('href')
+                managed_by_url = infoblock.find_element_by_tag_name('a').get_attribute('href')
             except:
                 managed_by_url = None
 
@@ -77,19 +76,21 @@ class CrawlerThreatfeedsIo(CrawlerBase):
                 continue
 
             # TODO
-            # Should only fetch the data if the list got modified
-            # since the last fetch (date_last_fetch)
+            # Should only fetch the data if the list got modified since the last fetch (date_last_fetch)
 
             resp = requests.get(data_url)
             if resp.status_code != requests.codes.ok:
                 continue
             data = resp.text
 
-            iplist_rec = IP_List_Record()
-            iplist_rec.name = name
-            iplist_rec.src_url = self.url
-            iplist_rec.managed_by['name'] = managed_by_name
-            iplist_rec.managed_by['url'] = managed_by_url
+            iplist_rec = IP_List_Record(
+                name = name,
+                src_url = self.url,
+                managed_by = {
+                    'name': managed_by_name,
+                    'url': managed_by_url
+                }
+            )
             self._iplist_records.update({name: iplist_rec})
 
             # Process the data depending on the list

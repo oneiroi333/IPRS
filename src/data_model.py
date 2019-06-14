@@ -26,8 +26,8 @@ class IP_Record:
             ip_address = None,
             ip_version = 4,
             date_created = datetime.now(),
-            #date_first_seen = datetime.now(),
-            #date_last_seen = datetime.now(),
+            date_first_seen = datetime.now(),
+            date_last_seen = datetime.now(),
             tags = {
                 'proxy': False,
                 'tor_node': False,
@@ -38,13 +38,13 @@ class IP_Record:
                 'attacker': False
             },
             whois = None,
-            ip_list_ids = []
+            iplist_refs = []
             ):
         self.ip_address = ip_address
         self.ip_version = ip_version
         self.date_created = date_created
-        #self.date_first_seen = date_first_seen
-        #self.date_last_seen = date_last_seen
+        self.date_first_seen = date_first_seen
+        self.date_last_seen = date_last_seen
         self.tags = tags
         self.whois = whois
-        self.ip_list_ids = ip_list_ids
+        self.iplist_refs = iplist_refs
