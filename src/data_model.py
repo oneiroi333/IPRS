@@ -8,6 +8,7 @@ class IP_List_Record:
             date_created = datetime.now(),
             date_last_fetch = datetime.now(),
             src_url = None,
+            fetch_url = None,
             managed_by = {
                 'name': None,
                 'url': None
@@ -17,6 +18,7 @@ class IP_List_Record:
         self.date_created = date_created
         self.date_last_fetch = date_last_fetch
         self.src_url= src_url
+        self.fetch_url= fetch_url
         self.managed_by = managed_by
 
 

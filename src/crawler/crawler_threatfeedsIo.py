@@ -16,7 +16,7 @@ class CrawlerThreatfeedsIo(CrawlerBase):
     '''
 
     def __init__(self):
-        self.url = 'https://threatfeeds.io/'
+        self._url = 'https://threatfeeds.io/'
         self._webdriver_conf = {
             'chrome_path': None,
             'chromedriver_path': None
@@ -41,7 +41,7 @@ class CrawlerThreatfeedsIo(CrawlerBase):
             )
         else:
             driver = webdriver.Chrome(options=chrome_options)
-        driver.get(self.url)
+        driver.get(self._url)
 
         # Get the list metadata
         results = driver.find_element_by_id('results')
@@ -75,9 +75,9 @@ class CrawlerThreatfeedsIo(CrawlerBase):
             except:
                 continue
 
-            # TODO
+            # FUTURE IMPROVEMENT
             # Should only fetch the data if the list got modified since the last fetch (date_last_fetch)
-            # This data needs to be passed from the CrawlerManager and in return from the DataComposer
+            # This date information has to come from the database and somehow passed to the crawler (true for every crawler)
 
             resp = requests.get(data_url)
             if resp.status_code != requests.codes.ok:
@@ -86,7 +86,8 @@ class CrawlerThreatfeedsIo(CrawlerBase):
 
             iplist_rec = IP_List_Record(
                 name = name,
-                src_url = self.url,
+                src_url = self._url,
+                fetch_url = data_url,
                 managed_by = {
                     'name': managed_by_name,
                     'url': managed_by_url
