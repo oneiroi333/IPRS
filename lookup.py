@@ -2,6 +2,7 @@
 
 import sys
 from pymongo import MongoClient
+from pymongo import errors.ConnectionFailure
 from datetime import datetime
 
 
