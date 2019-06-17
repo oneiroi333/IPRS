@@ -1,7 +1,7 @@
 # IPRS
 IP reputation system
 
-This software implements web crawlers that gather IP address information from publicly accessible OSINT feeds.
+This software implements a simple IP reputation system, consisting of web crawlers that gather IP address information from publicly accessible OSINT feeds and a Whois lookup module.
 For every collected IP address a Whois lookup is made. The whole information packet is then stored in a MongoDB Database.
 To launch the data collection process execute the file 'crawler.py'.
 
