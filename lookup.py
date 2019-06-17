@@ -62,6 +62,7 @@ def print_result(result):
     for iplist in result['iplist_refs']:
         print('Name: {}'.format(iplist['name']))
         print('Source URL: {}'.format(iplist['src_url']))
+        print('Fetch URL: {}'.format(iplist['fetch_url']))
         if iplist['managed_by']['name'] or iplist['managed_by']['url']:
             print('Managed by:')
             if iplist['managed_by']['name']:
