@@ -35,7 +35,7 @@ class DataComposer():
 
     def start(self):
         if self.verbose:
-            print_log(self._time_frmt_log, 'Start: {}'.format(type(self).__name__))
+            print_log(self._time_frmt_log, '[{}] Start'.format(self.__class__.__name__))
             
         client = MongoClient(
             host = self.mongodb['host'],
@@ -48,13 +48,15 @@ class DataComposer():
             client.admin.command('ismaster')
         except ConnectionFailure:
             if self.verbose:
-                print_log(self._time_frmt_log, 'DataComposer: Connection to MongoDB ({}:{}) failed! Exiting...'.format(self.mongodb['host'], self.mongodb['port']))
+                print_log(self._time_frmt_log, '[{}] Connection to MongoDB ({}:{}) failed! Exiting...'.format(self.__class__.__name__, self.mongodb['host'], self.mongodb['port']))
             client.close()
             raise RuntimeError
 
         self._conn = client[self.mongodb['db']]
         self._crawler_manager.start()
         client.close()
+        if self.verbose:
+            print_log(self._time_frmt_log, '[{}] Finish'.format(self.__class__.__name__))
 
     def _process_crawler_result(self, crawler_result):
         # Process the iplists
@@ -87,8 +89,10 @@ class DataComposer():
         db_records = list(coll.find({'ip_address': {'$in': ip_rec_ip_addresses}}))
         # Update/insert the ip
         for ip_addr in ip_rec_ip_addresses:
+            # TODO whois lookup should be an extern service, else this takes ages
             # Whois lookup
-            whois = Whois(ip_addr).lookup()
+            #whois = Whois(ip_addr).lookup()
+            whois = None
 
             ip_rec = crawler_result.ip_records[ip_addr]
             db_rec = next(filter(lambda rec: rec['ip_address'] == ip_addr, db_records), None)

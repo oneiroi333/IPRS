@@ -1,5 +1,5 @@
 # CrawlerThreatfeedsIo
-selenium
+bs4
 
 # DataComposer
 pymongo
