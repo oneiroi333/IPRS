@@ -88,10 +88,8 @@ class CrawlerThreatfeedsIo(CrawlerBase):
                     name = name,
                     src_url = self._url,
                     fetch_url = fetch_url,
-                    managed_by = {
-                        'name': managed_by_name,
-                        'url': managed_by_url
-                    }
+                    managed_by_name = managed_by_name,
+                    managed_by_url = managed_by_url
                 )
                 self._iplist_records.update({name: iplist_rec})
 
@@ -106,6 +104,11 @@ class CrawlerThreatfeedsIo(CrawlerBase):
             'ipv6': set()
         }
 
+        if isinstance(data, bytes):
+            try:
+                data = data.decode()
+            except:
+                return
         # Handle the different lists
         if name in [
                 'Bad IPs', 'Blocklist.de Blocklist', 'Botvrij.eu - ips', 'CI Bad Guys',
@@ -118,13 +121,13 @@ class CrawlerThreatfeedsIo(CrawlerBase):
                 'Hancitor IPs'
             ]:
             try:
-                data = '\n'.join([line.split('#')[0] for line in data.decode().splitlines()])
+                data = '\n'.join([line.split('#')[0] for line in data.splitlines()])
             except:
                 return
             ip_addr_all = extract_ip_addr_all(data)
         elif name in ['C&C IPs']:
             try:
-                data = '\n'.join([line.split(',')[0] for line in data.decode().splitlines()])
+                data = '\n'.join([line.split(',')[0] for line in data.splitlines()])
             except:
                 return
             ip_addr_all = extract_ip_addr_all(data)
@@ -133,25 +136,25 @@ class CrawlerThreatfeedsIo(CrawlerBase):
             pass
         elif name in ['Dictionary SSH Attacks']:
             try:
-                data = '\n'.join([line.split(':')[1] for line in data.decode().splitlines()])
+                data = '\n'.join([line.split(':')[1] for line in data.splitlines()])
             except:
                 return
             ip_addr_all = extract_ip_addr_all(data)
         elif name in ['High Confidence IPv4 Drop List']:
             try:
-                data = '\n'.join([line.split('-')[0] for line in data.decode().splitlines()])
+                data = '\n'.join([line.split('-')[0] for line in data.splitlines()])
             except:
                 return
             ip_addr_all = extract_ip_addr_all(data)
         elif name in ['IPSpamList']:
             try:
-                data = '\n'.join([line.split(',')[2] for line in data.decode().splitlines()])
+                data = '\n'.join([line.split(',')[2] for line in data.splitlines()])
             except:
                 return
             ip_addr_all = extract_ip_addr_all(data)
         elif name in ['SSL BL']:
             try:
-                data = '\n'.join([line.split(',')[1] for line in data.decode().splitlines()])
+                data = '\n'.join([line.split(',')[1] for line in data.splitlines()])
             except:
                 return
             ip_addr_all = extract_ip_addr_all(data)
@@ -160,8 +163,7 @@ class CrawlerThreatfeedsIo(CrawlerBase):
             for ip_addr in ip_addr_all[ip_version]:
                 # Add ip if it doesnt exist already
                 if not self._ip_records.get(ip_addr):
-                    ip_rec = IP_Record()
-                    ip_rec.ip_address = ip_addr
+                    ip_rec = IP_Record(ip_addr)
                     ip_rec.ip_version = 4 if ip_version == 'ipv4' else 6
                     if name in ['C&C IPs']:
                         ip_rec.tags['cc'] = True

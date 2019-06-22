@@ -89,7 +89,7 @@ class DataComposer():
         db_records = list(coll.find({'ip_address': {'$in': ip_rec_ip_addresses}}))
         # Update/insert the ip
         for ip_addr in ip_rec_ip_addresses:
-            # TODO whois lookup should be an extern service, else this takes ages
+            # TODO whois lookup should be an external service, else this takes ages
             # Whois lookup
             #whois = Whois(ip_addr).lookup()
             whois = None
