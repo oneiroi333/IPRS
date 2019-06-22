@@ -28,7 +28,6 @@ def main():
     conn = client['iprs']
     coll = conn.ip_addr
     result = list(coll.aggregate([
-        {'$unwind': '$iplist_refs'},
         {'$lookup': {
             'from': 'ip_addr_list',
             'localField': 'iplist_refs',
@@ -71,6 +70,7 @@ def print_result(result):
                 print('  URL: {}'.format(iplist['managed_by']['url']))
         print('Date first fetch: {}'.format(datetime.strptime(iplist['date_created'], '%Y-%m-%d %H:%M:%S.%f').strftime('%Y-%m-%d %H:%M:%S')))
         print('Date last fetch: {}'.format(datetime.strptime(iplist['date_last_fetch'], '%Y-%m-%d %H:%M:%S.%f').strftime('%Y-%m-%d %H:%M:%S')))
+        print()
 
     whois = result['whois']
     if whois:
