@@ -33,7 +33,7 @@ class CrawlerThreatfeedsIo(CrawlerBase):
             'Ransomware IPs',
             'SSL BL',
             'Talos IP Blacklist',
-            'Tor IPs',
+            'Tor IPs', # allows download every 30min
             'Zeus Bad IPs'
         ]
         self._ip_records = {} # { IP_Record.ip_address : IP_Record }
@@ -68,16 +68,20 @@ class CrawlerThreatfeedsIo(CrawlerBase):
                 managed_by_url = feed.get('website')
                 fetch_url = feed.get('url')
                 if not fetch_url:
+                    if self.verbose:
+                        print_log(TIME_FRMT_LOG, '[{}] [ERROR] Processing feed: \'{}\': {}'.format(self.__class__.__name__, feed.get('name'), 'no url to fetch from'))
                     continue
                 try:
-                    # Some urls require a user-agent to get the data
+                    # Some urls require a user-agent to get the data, so lets set a simple one
                     req = request.Request(
                         fetch_url,
                         headers = {'User-Agent': 'Mozilla/5.0'}
                     )
                     data = request.urlopen(req).read()
-                except (error.URLError, ValueError):
+                except error.URLError as err:
                     # Unable to get the data
+                    if self.verbose:
+                        print_log(TIME_FRMT_LOG, '[{}] [ERROR] Processing feed: \'{}\': {}'.format(self.__class__.__name__, feed.get('name'), err))
                     continue
 
                 iplist_rec = IP_List_Record(
